@@ -1,20 +1,38 @@
 package main
 
 import (
-	"fmt"
 	"log"
+	"os"
 
+	"github.com/GianniBuoni/blog-aggregator/internal/commands"
 	"github.com/GianniBuoni/blog-aggregator/internal/config"
 )
 
 func main() {
+	state := &commands.State{}
 	cfg, err := config.Read()
 	if err != nil {
 		log.Fatal(err)
 	}
+	state.Config = cfg
 
-	cfg.SetUser("Jon")
+	commandsList := commands.Commands{
+		Registry: map[string]func(*commands.State, commands.Command) error{},
+	}
 
-	newCfg, err := config.Read()
-	fmt.Print(*newCfg)
+	commandsList.Register("login", commands.HandlerLogin)
+
+	input := os.Args
+	if len(input) < 2 {
+		log.Fatalln("error: expecting command name and command argument.")
+	}
+
+	command := commands.Command{
+		Name: input[1],
+		Args: input[2:],
+	}
+
+	if err := commandsList.Run(state, command); err != nil {
+		log.Fatalf("issue running command: %v", err)
+	}
 }

@@ -27,7 +27,10 @@ func Read() (*Config, error) {
 	return config, nil
 }
 
-func (c *Config) SetUser(name string) {
+func (c *Config) SetUser(name string) error {
 	c.CurrentUserName = name
-	write(c)
+  if err := write(c); err != nil {
+    return err
+  }
+  return nil
 }
