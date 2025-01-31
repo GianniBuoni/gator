@@ -4,8 +4,8 @@ import (
 	"log"
 	"os"
 
-	"github.com/GianniBuoni/blog-aggregator/internal/commands"
-	"github.com/GianniBuoni/blog-aggregator/internal/config"
+	"github.com/GianniBuoni/gator/internal/commands"
+	"github.com/GianniBuoni/gator/internal/config"
 )
 
 func main() {
