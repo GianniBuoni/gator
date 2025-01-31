@@ -1,11 +1,14 @@
 package main
 
 import (
+	"database/sql"
 	"log"
 	"os"
 
 	"github.com/GianniBuoni/gator/internal/commands"
 	"github.com/GianniBuoni/gator/internal/config"
+	"github.com/GianniBuoni/gator/internal/database"
+	_ "github.com/lib/pq"
 )
 
 func main() {
@@ -16,11 +19,21 @@ func main() {
 	}
 	state.Config = cfg
 
+	conn, err := sql.Open("postgres", cfg.DbURL)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	dbQueries := database.New(conn)
+
+	state.Database = dbQueries
+
 	commandsList := commands.Commands{
 		Registry: map[string]func(*commands.State, commands.Command) error{},
 	}
 
 	commandsList.Register("login", commands.HandlerLogin)
+  commandsList.Register("register", commands.HandlerRegister)
 
 	input := os.Args
 	if len(input) < 2 {

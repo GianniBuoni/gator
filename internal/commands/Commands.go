@@ -1,14 +1,15 @@
 package commands
 
 import (
-	"errors"
 	"fmt"
 
 	"github.com/GianniBuoni/gator/internal/config"
+	"github.com/GianniBuoni/gator/internal/database"
 )
 
 type State struct {
-	Config *config.Config
+	Config   *config.Config
+	Database *database.Queries
 }
 
 type Command struct {
@@ -31,18 +32,5 @@ func (c *Commands) Run(s *State, cmd Command) error {
 	if err := c.Registry[cmd.Name](s, cmd); err != nil {
 		return err
 	}
-	return nil
-}
-
-func HandlerLogin(s *State, cmd Command) error {
-	if len(cmd.Args) == 0 {
-		return errors.New("login extects a single argument: username")
-	}
-
-	if err := s.Config.SetUser(cmd.Args[0]); err != nil {
-		return err
-	}
-
-	fmt.Printf("%s logged in!", cmd.Args[0])
 	return nil
 }
