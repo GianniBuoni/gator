@@ -15,3 +15,7 @@ INSERT INTO feeds (
   $6
 )
   RETURNING *;
+
+-- name: GetFeeds :many
+SELECT *, users.name as user FROM feeds
+INNER JOIN users ON user_id = users.id;
