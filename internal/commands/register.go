@@ -10,6 +10,11 @@ import (
 	"github.com/google/uuid"
 )
 
+var register CommandData = CommandData{
+	name:    "register",
+	handler: HandlerRegister,
+}
+
 func HandlerRegister(s *State, c Command) error {
 	if len(c.Args) < 0 {
 		return errors.New("register expects an argument: name")
@@ -39,7 +44,7 @@ func HandlerRegister(s *State, c Command) error {
 		return fmt.Errorf("Issue creating new user: %w", err)
 	}
 
-  s.Config.SetUser(newUser.Name)
+	s.Config.SetUser(newUser.Name)
 
 	fmt.Printf("New user: %s, %d", newUser.Name, newUser.ID)
 	return nil

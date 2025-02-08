@@ -7,6 +7,11 @@ import (
 	"github.com/GianniBuoni/gator/internal/rss"
 )
 
+var agg CommandData = CommandData{
+	name:    "agg",
+	handler: HandlerAgg,
+}
+
 func HandlerAgg(s *State, cmd Command) error {
 	feed, err := rss.FetchFeed(context.Background(), "https://www.wagslane.dev/index.xml")
 	if err != nil {

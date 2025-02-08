@@ -31,12 +31,7 @@ func main() {
 	commandsList := commands.Commands{
 		Registry: map[string]func(*commands.State, commands.Command) error{},
 	}
-
-	commandsList.Register("login", commands.HandlerLogin)
-	commandsList.Register("register", commands.HandlerRegister)
-	commandsList.Register("reset", commands.HandlerReset)
-	commandsList.Register("users", commands.HandlerUsers)
-	commandsList.Register("agg", commands.HandlerAgg)
+	commandsList.Load()
 
 	input := os.Args
 	if len(input) < 2 {

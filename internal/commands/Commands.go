@@ -21,8 +21,13 @@ type Commands struct {
 	Registry map[string]func(*State, Command) error
 }
 
-func (c *Commands) Register(name string, f func(*State, Command) error) {
-	c.Registry[name] = f
+type CommandData struct {
+	name    string
+	handler func(*State, Command) error
+}
+
+func (c *Commands) Register(data CommandData) {
+	c.Registry[data.name] = data.handler
 }
 
 func (c *Commands) Run(s *State, cmd Command) error {

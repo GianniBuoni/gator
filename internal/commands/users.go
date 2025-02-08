@@ -5,6 +5,11 @@ import (
 	"fmt"
 )
 
+var users CommandData = CommandData{
+	name:    "users",
+	handler: HandlerUsers,
+}
+
 func HandlerUsers(s *State, c Command) error {
 	users, err := s.Database.GetUsers(context.Background())
 	if err != nil {

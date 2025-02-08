@@ -6,6 +6,11 @@ import (
 	"fmt"
 )
 
+var login CommandData = CommandData{
+	name:    "login",
+	handler: HandlerLogin,
+}
+
 func HandlerLogin(s *State, cmd Command) error {
 	if len(cmd.Args) == 0 {
 		return errors.New("login extects a single argument: username")
