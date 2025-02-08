@@ -46,6 +46,6 @@ func HandlerRegister(s *State, c Command) error {
 
 	s.Config.SetUser(newUser.Name)
 
-	fmt.Printf("New user: %s, %d", newUser.Name, newUser.ID)
+	fmt.Printf("New user: %s, %s", newUser.Name, newUser.ID)
 	return nil
 }
