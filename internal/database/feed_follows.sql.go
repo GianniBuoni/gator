@@ -73,6 +73,60 @@ func (q *Queries) CreateFeedFollow(ctx context.Context, arg CreateFeedFollowPara
 	return i, err
 }
 
+const deleteFeedFollow = `-- name: DeleteFeedFollow :exec
+DELETE FROM feed_follows
+WHERE id = $1
+`
+
+func (q *Queries) DeleteFeedFollow(ctx context.Context, id uuid.UUID) error {
+	_, err := q.db.ExecContext(ctx, deleteFeedFollow, id)
+	return err
+}
+
+const getFeedFollow = `-- name: GetFeedFollow :one
+SELECT
+  ff.id, ff.created_at, ff.updated_at, ff.user_id, ff.feed_id, 
+  feeds.name AS feed_name,
+  feeds.url AS feed_url,
+  users.name AS user_name
+FROM feed_follows ff
+INNER JOIN feeds ON ff.feed_id = feeds.id
+INNER JOIN users ON ff.user_id = users.id
+WHERE users.name = $1 AND feeds.url = $2
+`
+
+type GetFeedFollowParams struct {
+	Name string
+	Url  string
+}
+
+type GetFeedFollowRow struct {
+	ID        uuid.UUID
+	CreatedAt time.Time
+	UpdatedAt time.Time
+	UserID    uuid.UUID
+	FeedID    uuid.UUID
+	FeedName  string
+	FeedUrl   string
+	UserName  string
+}
+
+func (q *Queries) GetFeedFollow(ctx context.Context, arg GetFeedFollowParams) (GetFeedFollowRow, error) {
+	row := q.db.QueryRowContext(ctx, getFeedFollow, arg.Name, arg.Url)
+	var i GetFeedFollowRow
+	err := row.Scan(
+		&i.ID,
+		&i.CreatedAt,
+		&i.UpdatedAt,
+		&i.UserID,
+		&i.FeedID,
+		&i.FeedName,
+		&i.FeedUrl,
+		&i.UserName,
+	)
+	return i, err
+}
+
 const getFeedFollowsForUser = `-- name: GetFeedFollowsForUser :many
 SELECT
   ff.id, ff.created_at, ff.updated_at, ff.user_id, ff.feed_id,

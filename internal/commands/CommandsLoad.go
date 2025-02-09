@@ -6,7 +6,7 @@ func (c *Commands) Load() {
 		feeds, follow, following,
 		login,
 		register, reset,
-		users,
+		unfollow, users,
 	}
 	for _, data := range toRegister {
 		c.Register(data)
