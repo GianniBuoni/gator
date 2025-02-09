@@ -1,4 +1,4 @@
-package rss
+package lib
 
 import (
 	"context"

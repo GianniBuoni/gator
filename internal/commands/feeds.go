@@ -3,8 +3,8 @@ package commands
 import (
 	"context"
 	"fmt"
-	"os"
-	"text/tabwriter"
+
+	"github.com/GianniBuoni/gator/internal/lib"
 )
 
 var feeds CommandData = CommandData{
@@ -18,9 +18,7 @@ func HandlerFeeds(s *State, cmd Command) error {
 		return err
 	}
 	fmt.Println()
-	padding := 4
-	w := tabwriter.NewWriter(os.Stdout, 0, 0, padding, ' ', 0)
-	fmt.Fprintln(w, "NAME\tURL\tUSER\t")
+	w := lib.NewFeedTable()
 	for _, feed := range feedList {
 		row := fmt.Sprintf("%s\t%s\t%s\t", feed.Name, feed.Url, feed.User)
 		fmt.Fprintln(w, row)
