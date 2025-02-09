@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"github.com/GianniBuoni/gator/internal/database"
+	"github.com/GianniBuoni/gator/internal/lib"
 	"github.com/google/uuid"
 )
 
@@ -33,6 +34,26 @@ func HandlerAddFeed(s *State, cmd Command) error {
 		UserID:    user.ID,
 	}
 	feed, err := s.Database.CreateFeed(ctx, params)
-	fmt.Printf("⭐ Feed for %s added! %s : %s", user.Name, feed.Name, feed.Url)
+	if err != nil {
+		return err
+	}
+	ffParams := database.CreateFeedFollowParams{
+		ID:        uuid.New(),
+		CreatedAt: time.Now(),
+		UpdatedAt: time.Now(),
+		UserID:    user.ID,
+		FeedID:    feed.ID,
+	}
+	feedFollow, err := s.Database.CreateFeedFollow(ctx, ffParams)
+	if err != nil {
+		return err
+	}
+	fmt.Println()
+	fmt.Println("⭐ New feed added.")
+	w := lib.NewFeedTable()
+	row := fmt.Sprintf("%s\t%s\t%s\t", feedFollow.FeedName, feed.Url, feedFollow.UserName)
+	fmt.Fprintln(w, row)
+	w.Flush()
+
 	return nil
 }
