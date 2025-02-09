@@ -18,8 +18,8 @@ func HandlerFeeds(s *State, cmd Command) error {
 		return err
 	}
 	fmt.Println()
-	padding := 3
-	w := tabwriter.NewWriter(os.Stdout, 0, 0, padding, ' ', tabwriter.Debug)
+	padding := 4
+	w := tabwriter.NewWriter(os.Stdout, 0, 0, padding, ' ', 0)
 	fmt.Fprintln(w, "NAME\tURL\tUSER\t")
 	for _, feed := range feedList {
 		row := fmt.Sprintf("%s\t%s\t%s\t", feed.Name, feed.Url, feed.User)
