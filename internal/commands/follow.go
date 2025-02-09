@@ -13,10 +13,10 @@ import (
 
 var follow CommandData = CommandData{
 	name:    "follow",
-	handler: HandlerFollow,
+	handler: middlewareLoggedIn(HandlerFollow),
 }
 
-func HandlerFollow(s *State, cmd Command) error {
+func HandlerFollow(s *State, cmd Command, user database.User) error {
 	if len(cmd.Args) != 1 {
 		return errors.New("follow takes one argument. $1, url.")
 	}
@@ -24,10 +24,6 @@ func HandlerFollow(s *State, cmd Command) error {
 	feed, err := s.Database.GetFeed(ctx, cmd.Args[0])
 	if err != nil {
 		return fmt.Errorf("'%s' issue getting feed: %w\n", cmd.Args[0], err)
-	}
-	user, err := s.Database.GetUser(ctx, s.Config.CurrentUserName)
-	if err != nil {
-		return fmt.Errorf("issue getting current user: %w\n", err)
 	}
 	params := database.CreateFeedFollowParams{
 		ID:        uuid.New(),

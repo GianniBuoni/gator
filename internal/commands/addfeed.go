@@ -13,18 +13,14 @@ import (
 
 var addfeed CommandData = CommandData{
 	name:    "addfeed",
-	handler: HandlerAddFeed,
+	handler: middlewareLoggedIn(HandlerAddFeed),
 }
 
-func HandlerAddFeed(s *State, cmd Command) error {
+func HandlerAddFeed(s *State, cmd Command, user database.User) error {
 	if len(cmd.Args) != 2 {
 		return errors.New("addfeed takes two arguments. $1 name of the feed, $2 url of the feed.")
 	}
 	ctx := context.Background()
-	user, err := s.Database.GetUser(ctx, s.Config.CurrentUserName)
-	if err != nil {
-		return err
-	}
 	params := database.CreateFeedParams{
 		ID:        uuid.New(),
 		CreatedAt: time.Now(),

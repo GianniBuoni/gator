@@ -4,17 +4,18 @@ import (
 	"context"
 	"fmt"
 
+	"github.com/GianniBuoni/gator/internal/database"
 	"github.com/GianniBuoni/gator/internal/lib"
 )
 
 var following CommandData = CommandData{
 	name:    "following",
-	handler: HandlerFollowing,
+	handler: middlewareLoggedIn(HandlerFollowing),
 }
 
-func HandlerFollowing(s *State, cmd Command) error {
+func HandlerFollowing(s *State, cmd Command, user database.User) error {
 	ctx := context.Background()
-	feeds, err := s.Database.GetFeedFollowsForUser(ctx, s.Config.CurrentUserName)
+	feeds, err := s.Database.GetFeedFollowsForUser(ctx, user.Name)
 	if err != nil {
 		return fmt.Errorf("issue getting user feeds: %w", err)
 	}
