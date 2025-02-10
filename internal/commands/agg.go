@@ -1,8 +1,8 @@
 package commands
 
 import (
-	"context"
 	"fmt"
+	"time"
 
 	"github.com/GianniBuoni/gator/internal/lib"
 )
@@ -13,10 +13,22 @@ var agg CommandData = CommandData{
 }
 
 func HandlerAgg(s *State, cmd Command) error {
-	feed, err := lib.FetchFeed(context.Background(), "https://www.wagslane.dev/index.xml")
-	if err != nil {
-		return fmt.Errorf("FetchFeed: %w", err)
+	var duration string
+	if len(cmd.Args) != 1 {
+		duration = "30s"
+	} else {
+		duration = cmd.Args[0]
 	}
-	fmt.Println(*feed)
-	return nil
+	timeBetweenReq, err := time.ParseDuration(duration)
+	if err != nil {
+		return fmt.Errorf("issue parsing '%s': %w", cmd.Args[0], err)
+	}
+	ticker := time.NewTicker(timeBetweenReq)
+	defer ticker.Stop()
+	for ; ; <-ticker.C {
+		err := lib.ScrapeFeeds(s.Database)
+		if err != nil {
+			return err
+		}
+	}
 }
