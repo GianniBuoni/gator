@@ -3,6 +3,7 @@ package commands
 func (c *Commands) Load() {
 	toRegister := []CommandData{
 		addfeed, agg,
+		browse,
 		feeds, follow, following,
 		login,
 		register, reset,
