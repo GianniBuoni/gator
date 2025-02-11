@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"github.com/GianniBuoni/gator/internal/database"
+	"github.com/google/uuid"
 )
 
 func ScrapeFeeds(store *database.Queries) error {
@@ -27,15 +28,30 @@ func ScrapeFeeds(store *database.Queries) error {
 		return fmt.Errorf("issue updating feed fetch time: %w", err)
 	}
 	// fetch feed data
-	fmt.Println()
-	fmt.Println(feed.Name)
-	fmt.Println("------")
+	fmt.Printf("Fetched from '%s'\n", feed.Name)
 	feedData, err := FetchFeed(ctx, feed.Url)
 	if err != nil {
 		return fmt.Errorf("issue getting feed data: %w", err)
 	}
 	for _, rssItem := range feedData.Channel.Item {
-		fmt.Println(rssItem.Title)
+		publishedAt, err := time.Parse(time.RFC1123Z, rssItem.PubDate)
+		if err != nil {
+			return err
+		}
+		postParam := database.CreatePostParams{
+			ID:          uuid.New(),
+			CreatedAt:   time.Now(),
+			UpdatedAt:   time.Now(),
+			Title:       rssItem.Title,
+			Description: rssItem.Description,
+			Url:         rssItem.Link,
+			PublishedAt: publishedAt,
+			FeedID:      feed.ID,
+		}
+		_, err = store.CreatePost(ctx, postParam)
+		if err != nil {
+			return fmt.Errorf("issue creating post: %w", err)
+		}
 	}
 	return nil
 }

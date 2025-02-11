@@ -5,9 +5,11 @@ INSERT INTO posts (
   updated_at,
   title,
   description,
+  url,
   published_at,
   feed_id
-) VALUES ( $1, $2, $3, $4, $5, $6, $7 )
+) VALUES ( $1, $2, $3, $4, $5, $6, $7, $8 )
+ON CONFLICT DO NOTHING
 RETURNING *;
 
 -- name: GetPostsForUser :many

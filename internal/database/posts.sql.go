@@ -19,9 +19,11 @@ INSERT INTO posts (
   updated_at,
   title,
   description,
+  url,
   published_at,
   feed_id
-) VALUES ( $1, $2, $3, $4, $5, $6, $7 )
+) VALUES ( $1, $2, $3, $4, $5, $6, $7, $8 )
+ON CONFLICT DO NOTHING
 RETURNING id, created_at, updated_at, title, url, description, published_at, feed_id
 `
 
@@ -31,6 +33,7 @@ type CreatePostParams struct {
 	UpdatedAt   time.Time
 	Title       string
 	Description string
+	Url         string
 	PublishedAt time.Time
 	FeedID      uuid.UUID
 }
@@ -42,6 +45,7 @@ func (q *Queries) CreatePost(ctx context.Context, arg CreatePostParams) (Post, e
 		arg.UpdatedAt,
 		arg.Title,
 		arg.Description,
+		arg.Url,
 		arg.PublishedAt,
 		arg.FeedID,
 	)
