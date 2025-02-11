@@ -3,6 +3,7 @@ package commands
 import (
 	"context"
 	"fmt"
+	"regexp"
 	"strconv"
 
 	"github.com/GianniBuoni/gator/internal/database"
@@ -23,6 +24,7 @@ func handlerBrowse(s *State, cmd Command, user database.User) error {
 			return err
 		}
 	}
+
 	ctx := context.Background()
 	ags := database.GetPostsForUserParams{
 		ID:    user.ID,
@@ -34,7 +36,12 @@ func handlerBrowse(s *State, cmd Command, user database.User) error {
 	}
 
 	for _, post := range posts {
-		fmt.Printf("%s\n", post.Title)
+		fmt.Println()
+		fmt.Println(post.Title)
+		fmt.Println(post.PublishedAt)
+		match := regexp.MustCompile(`\<.+\>`)
+		desc := match.ReplaceAllString(post.Description[:80], "") + "..."
+		fmt.Println(desc)
 	}
 
 	return nil
